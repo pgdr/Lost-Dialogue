@@ -62,22 +62,25 @@ def say(speaker, line):
         attrs = ["bold"]
     cprint(line, colors.get(speaker, "white"), "on_black", attrs)
 
-
-if __name__ == "__main__":
-    speaker = sys.argv[2]
-    recipient = sys.argv[3]
-    line = " ".join(sys.argv[4:])
-    mood = sys.argv[1]
+def main(mood, speaker, recipient, prompt):
     instructions = get_instructions()
-    payload = get_payload(instructions, speaker, recipient, line, mood)
+    payload = get_payload(instructions, speaker, recipient, prompt, mood)
 
     print(f"{speaker = }")
     print(f"{recipient = }")
-    print(f"{line = }")
+    print(f"{prompt = }")
     print(f"{mood = }")
     response = requests.post(URL, headers=HEADERS, json=payload)
     if response.status_code == 200:
-        reply = response.json()["choices"][0]["message"]["content"]
-        say(sys.argv[2], reply)
+        return response.json()["choices"][0]["message"]["content"]
     else:
-        exit(f"Error: {response.status_code}: {response.text}")
+        raise Exception(f"Error: {response.status_code}: {response.text}")
+
+
+if __name__ == "__main__":
+    mood = sys.argv[1]
+    speaker = sys.argv[2]
+    recipient = sys.argv[3]
+    line = " ".join(sys.argv[4:])
+    reply = main(mood, speaker, recipient, line)
+    say(sys.argv[2], reply)
