@@ -43,7 +43,7 @@ def get_payload(instructions, speaker, recipient, line, mood, mode="statement"):
 speaker: {speaker}
 recipient: {recipient}
 line: {line}
-mood: {mode}
+mood: {mood}
 mode: {mode}
 </content>""",
             },
@@ -57,7 +57,10 @@ def say(speaker, line):
         "princess": "light_magenta",
         "boss": "dark_grey",
     }
-    cprint(line, colors.get(speaker, "white"), "on_black")
+    attrs = None
+    if speaker == "boss":
+        attrs = ["bold"]
+    cprint(line, colors.get(speaker, "white"), "on_black", attrs)
 
 
 if __name__ == "__main__":
@@ -72,7 +75,6 @@ if __name__ == "__main__":
     print(f"{recipient = }")
     print(f"{line = }")
     print(f"{mood = }")
-
     response = requests.post(URL, headers=HEADERS, json=payload)
     if response.status_code == 200:
         reply = response.json()["choices"][0]["message"]["content"]
