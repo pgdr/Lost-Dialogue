@@ -2,7 +2,6 @@ import requests
 import json
 import os
 import sys
-from termcolor import colored, cprint
 
 authinfo_path = os.path.expanduser("~/.authinfo")
 OPENAI_API_KEY = ""
@@ -29,7 +28,7 @@ def get_instructions():
         return "\n".join(l for l in fh)
 
 
-def get_payload(instructions, speaker, recipient, line, mood, mode="statement"):
+def get_payload(instructions, speaker, recipient, line, mood):
     return {
         "model": "gpt-4-1106-preview",
         "messages": [
@@ -40,27 +39,13 @@ def get_payload(instructions, speaker, recipient, line, mood, mode="statement"):
             {
                 "role": "user",
                 "content": f"""<content>
-speaker: {speaker}
-recipient: {recipient}
-line: {line}
-mood: {mood}
-mode: {mode}
+{speaker}: line: {line}\n
+{recipient} (mood: {mood}): [ENTER YOUR LINE]
 </content>""",
             },
         ],
     }
 
-
-def say(speaker, line):
-    colors = {
-        "ninja": "light_blue",
-        "princess": "light_magenta",
-        "boss": "dark_grey",
-    }
-    attrs = None
-    if speaker == "boss":
-        attrs = ["bold"]
-    cprint(line, colors.get(speaker, "white"), "on_black", attrs)
 
 def main(mood, speaker, recipient, prompt):
     instructions = get_instructions()
@@ -70,6 +55,9 @@ def main(mood, speaker, recipient, prompt):
     print(f"{recipient = }")
     print(f"{prompt = }")
     print(f"{mood = }")
+    import pprint
+
+    pprint.pprint(payload)
     response = requests.post(URL, headers=HEADERS, json=payload)
     if response.status_code == 200:
         return response.json()["choices"][0]["message"]["content"]
