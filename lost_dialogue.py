@@ -57,10 +57,12 @@ def main(mood, speaker, recipient, prompt):
     print(f"{mood = }")
     import pprint
 
-    pprint.pprint(payload)
+    #pprint.pprint(payload)
     response = requests.post(URL, headers=HEADERS, json=payload)
     if response.status_code == 200:
-        return response.json()["choices"][0]["message"]["content"]
+        retval = response.json()["choices"][0]["message"]["content"]
+        print("\n\tresponse", retval.strip(), "\n")
+        return retval
     else:
         raise Exception(f"Error: {response.status_code}: {response.text}")
 
