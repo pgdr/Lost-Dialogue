@@ -30,7 +30,7 @@ def get_instructions():
 
 def get_payload(instructions, speaker, recipient, line, mood):
     return {
-        "model": "gpt-4-1106-preview",
+        "model": "gpt-4.1",
         "messages": [
             {
                 "role": "system",
